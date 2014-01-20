@@ -37,13 +37,27 @@ function createBus(layer, busName, moveable) {
     positionsChanged[busName] = true;
     if(moveable) {
         group.on('dblclick', function() {
-            var p = prompt('Enter new name, or "delete" to delete: ');
-            positionsChanged[busName] = true;
-            var opos = positions[busName];
-            moveBus(busName, -999, -999);
-            if(p != 'delete') {
-                createBus(layer, p, moveable);
-                moveBus(p, opos[0], opos[1]);
+            var p = prompt('Choose one of the following commands:\n\n'+
+                           '\ttitle [new title]\t\tChange title\n'+
+                           '\tdelete\t\t\tDelete this\n'+
+                           '\tmove [x] [y]\t\tMove to position (x,y)\n'+
+                           '\tchanged\t\t\tForce change position\n'+
+                           '\nType your choice below..');
+            var c = p.split(' ',1);
+            if(c[0] == 'title' || c[0] == 'delete') {
+                positionsChanged[busName] = true;
+                var opos = positions[busName];
+                moveBus(busName, -999, -999);
+                if(p != 'delete') {
+                    createBus(layer, c[1], moveable);
+                    moveBus(c[1], opos[0], opos[1]);
+                }
+            } else if(c[0] == 'move') {
+                var mv = p.split(' ');
+                moveBus(busName, mv[1], mv[2]);
+                positionsChanged[busName] = true;
+            } else if(c[0] == 'changed') {
+                positionsChanged[busName] = true;
             }
         });
         group.on('dragmove', function() {
@@ -99,12 +113,40 @@ loadBuses = function(layer) {
     $.post('update.php', {'act': 'fetch'}, function(d) {
         for(i in d) {
             var pC = d[i].split(',');
-            createBus(layer, i);
+            createBus(layer, i, false);
             moveBus(i, pC[0], pC[1]);
             stage.draw();
             buses[i].draw();
         }
 
+    }, 'JSON');
+}
+
+checkMoves = function() {
+    $.post('update.php', {'act': 'fetch'}, function(d) {
+        console.log(d);
+        for(i in d) {
+            var pC = d[i].split(',');
+            // delete bus
+            if(d[i] == 'delete') {
+                if(typeof positions[i] != 'undefined') {
+                    positions[i] = [-999, -999];
+                }
+            // new bus
+            } else if(typeof positions[i] == 'undefined' && typeof buses[i] == 'undefined') {
+                createBus(layer, i, false);
+                moveBus(i, pC[0], pC[1]);
+                stage.draw();
+                buses[i].draw();
+            // move
+            } else {
+                if(!(positions[i][0] == pC[0] && positions[i][1] == pC[1])) {
+                    moveBus(i, pC[0], pC[1]);
+                    stage.draw();
+                    buses[i].draw();
+                }
+            }
+        }
     }, 'JSON');
 }
 
