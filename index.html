@@ -1,47 +1,26 @@
-
+<!doctype html>
 <html>
-    <head>
-        <title>TJHSST - Bus Locator</title>
-        <script src="kinetic.js"></script>
-        <script src="//code.jquery.com/jquery-1.10.2.min.js"></script>
-        <style type="text/css">
-        .saved {
-            position: fixed;
-            top: 10px;
-            right: 10px;
+<head>
+    <title>TJ Bus Locator</title>
+    <!-- dependencies -->
+    <script type="text/javascript" src="kinetic.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600" />
+    <link rel="stylesheet" type="text/css" href="bus.css" />
+</head>
 
-        }
-        </style>
-    </head>
-
-    <body>
+<body>
+    <div class="top">
         <h1>Bus Locator</h1>
-        <p>Name: <input type="text" name="busName" id="busName" size="10" maxLength="15" />
-        <input type="submit" name="createBus" id="createBus" value="Create Bus" onClick="cBus(); " /></p>
-        <div class="saved">Unsaved</div>
-        <div id="container"></div>
-        
-        <script>
-            stage = new Kinetic.Stage({
-                container: 'container',
-                width: 2500,
-                height: 2500
-            });
-            
-            layer = new Kinetic.Layer();
-
-            
-            var buses = {},
-                positions = {},
-                positionsChanged = {};
-        </script>
-        <script src="bus.js"></script>
-        <script>
-            stage.add(layer);
-            $(function() {
-                loadBuses(layer);
-                setInterval(checkChanges, 1000);
-            });
-        </script>
-    </body>
+    </div>
+    <div id="container"></div>
+    <script type="text/javascript" src="bus.js"></script>
+    <script type="text/javascript">
+        stage.add(layer);
+        $(function() {
+            loadBuses(layer, true);
+            setInterval(checkMoves, 1000);
+        });
+    </script>
+</body>
 </html>

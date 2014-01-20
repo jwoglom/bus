@@ -12,7 +12,9 @@ var buses = {},
 function renameBus(busText) {
     busText.setText(document.getElementById('busName').value);
 }
-
+decode = function(text) {
+    return decodeURIComponent(text).replace(/_/g, ' ');
+}
 function createBus(layer, busName, moveable) {
     console.log('createBus '+busName);
     if(typeof moveable == 'undefined') moveable = true;
@@ -31,7 +33,7 @@ function createBus(layer, busName, moveable) {
     var text = new Kinetic.Text({
         x: 54,
         y: 250,
-        text: busName,
+        text: decode(busName),
         rotationDeg: 270,
         fill: 'black',
         stroke: 'black',
@@ -71,7 +73,7 @@ function createBus(layer, busName, moveable) {
             } else if(c[0] == 'changed') {
                 positionsChanged[busName] = true;
             } else if(c[0] == 'nuke') {
-                $.post('update.php', {'act': 'init'}, function() { location.reload(); });
+                nuke();
             }
         });
         group.on('dragmove', function() {
@@ -99,11 +101,14 @@ function moveBus(busName, posX, posY) {
 }
 
 function cBus() {
-    createBus(window.layer, document.getElementById('busName').value);
+    var v = document.getElementById('busName').value;
+    if(v == 'nuke') nuke();
+    else createBus(window.layer, v);
 }
 
-
-
+function nuke() {
+    if(confirm('Are you sure you want to nuke?')) $.post('update.php', {'act': 'init'}, function() { location.reload(); });
+}
 
 checkChanges = function() {
     var request = {}, chgd = false;
