@@ -1,0 +1,31 @@
+<!doctype html>
+<html>
+<head>
+    <title>TJ Bus Locator</title>
+    <!-- dependencies -->
+    <script type="text/javascript" src="kinetic.js"></script>
+    <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600" />
+    <link rel="stylesheet" type="text/css" href="bus.css" />
+</head>
+
+<body>
+    <div class="top">
+        <h1>Bus Locator</h1>
+        <div class="add">
+            <input type="text" name="busName" id="busName" size="10" maxLength="15" />
+            <input type="submit" name="createBus" id="createBus" value="Create Bus" onClick="cBus(); " />
+        </div>
+    </div>
+    <div class="saved">Unsaved</div>
+    <div id="container"></div>
+    <script type="text/javascript" src="bus.js"></script>
+    <script type="text/javascript">
+        stage.add(layer);
+        $(function() {
+            loadBuses(layer, true);
+            setInterval(checkChanges, 1000);
+        });
+    </script>
+</body>
+</html>

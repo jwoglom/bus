@@ -1,3 +1,14 @@
+var stage = new Kinetic.Stage({
+    container: 'container',
+    width: 2500,
+    height: 2500
+});
+
+var layer = new Kinetic.Layer();
+
+var buses = {},
+    positions = {},
+    positionsChanged = {};
 function renameBus(busText) {
     busText.setText(document.getElementById('busName').value);
 }
@@ -42,6 +53,7 @@ function createBus(layer, busName, moveable) {
                            '\tdelete\t\t\tDelete this\n'+
                            '\tmove [x] [y]\t\tMove to position (x,y)\n'+
                            '\tchanged\t\t\tForce change position\n'+
+                           '\tnuke\t\t\tRemove all buses (WARNING)\n'+
                            '\nType your choice below..');
             var c = p.split(' ',1);
             if(c[0] == 'title' || c[0] == 'delete') {
@@ -58,6 +70,8 @@ function createBus(layer, busName, moveable) {
                 positionsChanged[busName] = true;
             } else if(c[0] == 'changed') {
                 positionsChanged[busName] = true;
+            } else if(c[0] == 'nuke') {
+                $.post('update.php', {'act': 'init'}, function() { location.reload(); });
             }
         });
         group.on('dragmove', function() {
@@ -109,11 +123,11 @@ checkChanges = function() {
     }
 }
 
-loadBuses = function(layer) {
+loadBuses = function(layer, moveable) {
     $.post('update.php', {'act': 'fetch'}, function(d) {
         for(i in d) {
             var pC = d[i].split(',');
-            createBus(layer, i, false);
+            createBus(layer, i, moveable);
             moveBus(i, pC[0], pC[1]);
             stage.draw();
             buses[i].draw();
@@ -127,13 +141,8 @@ checkMoves = function() {
         console.log(d);
         for(i in d) {
             var pC = d[i].split(',');
-            // delete bus
-            if(d[i] == 'delete') {
-                if(typeof positions[i] != 'undefined') {
-                    positions[i] = [-999, -999];
-                }
             // new bus
-            } else if(typeof positions[i] == 'undefined' && typeof buses[i] == 'undefined') {
+            if(typeof positions[i] == 'undefined' && typeof buses[i] == 'undefined') {
                 createBus(layer, i, false);
                 moveBus(i, pC[0], pC[1]);
                 stage.draw();
