@@ -13,7 +13,7 @@
     <div class="top">
         <h1>Bus Locator</h1>
         <div class="add">
-            <input type="text" name="busName" id="busName" size="10" maxLength="15" />
+            <input type="text" name="busName" id="busName" size="20" maxLength="25" onkeydown="if(this.value.substring(0,5) == 'text:') this.maxLength=99999,this.size=50; else this.maxLength=25,this.size=20" />
             <input type="submit" name="createBus" id="createBus" value="Create Bus" onClick="cBus(); " />
         </div>
     </div>
