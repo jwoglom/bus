@@ -101,28 +101,37 @@ function createBus(layer, busName, moveable) {
     positionsChanged[busName] = true;
     if(moveable) {
         group.on('dblclick', function() {
+            // Allow double-click toggling
+            if($(".updater").css("display") != "none" && $(".updater").attr("data-bus") == busName) {
+                $(".updater").hide();
+                return;
+            }
             $(".updater").show()
                          .css({
-                            "left": positions[busName][0],
-                            "right": positions[busName][1]
-                        });
+                            "left": positions[busName][0]+"px",
+                            "top": (parseInt(positions[busName][1])+75)+"px"
+                        }).attr("data-bus", busName);
             $(".updater > input").val(busName);
-            $(".updater > #updaterDelete").click(function() {
-                positionsChanged[busName] = true;
-                var opos = positions[busName];
-                moveBus(busName, -999, -999);
-                $(".updater").hide();
+            $(".updater #updaterDelete").click(function() {
+                if($(this).parent().parent().attr("data-bus") == busName) {
+                    positionsChanged[busName] = true;
+                    var opos = positions[busName];
+                    moveBus(busName, -999, -999);
+                    $(".updater").hide();
+                }
             });
 
-            $(".updater > #updaterChange").click(function() {
-                var nn = $(".updater > input").val();
-                console.log("Changing name to "+nn)
-                positionsChanged[busName] = true;
-                var opos = positions[busName];
-                moveBus(busName, -999, -999);
-                createBus(layer, nn, moveable);
-                moveBus(nn, opos[0], opos[1]);
-                $(".updater").hide();
+            $(".updater #updaterChange").click(function() {
+                if($(this).parent().parent().attr("data-bus") == busName) {
+                    var nn = $(".updater > input").val();
+                    console.log("Changing name to "+nn)
+                    positionsChanged[busName] = true;
+                    var opos = positions[busName];
+                    moveBus(busName, -999, -999);
+                    createBus(layer, nn, moveable);
+                    moveBus(nn, opos[0], opos[1]);
+                    $(".updater").hide();
+                }
             });
             /*
             var c = p.split(' ',1);

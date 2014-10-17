@@ -57,7 +57,7 @@ body {
     top: 200px;
     width: 300px;
     height: 60px;
-    display: visible;
+    display: none;
     z-index: 10;
 }
 
