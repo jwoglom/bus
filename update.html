@@ -15,7 +15,7 @@
     <div class="top">
         <div class="add input-group">
             <input type="text" class="form-control" name="busName" id="busName" size="20" maxLength="25" onkeydown="if(this.value.substring(0,5) == 'text:') this.maxLength=99999,this.size=50; else this.maxLength=25,this.size=20" />
-            <button name="createBus" type="button" class="input-group-addon btn" id="createBus" onClick="cBus()">Create Bus</button>
+            <button name="createBus" type="button" class="input-group-addon btn" id="createBus" onClick="cBus(); $('#busName').val('');">Create Bus</button>
         </div>
     </div>
     <div class="saved">Unsaved</div>
@@ -33,10 +33,12 @@
     <div id="container"></div>
     <script type="text/javascript" src="bus.js?<?php echo time(); ?>"></script>
     <script type="text/javascript">
+        window.isUpdate = true;
         stage.add(layer);
         $(function() {
             loadBuses(layer, true);
             setInterval(checkChanges, 1000);
+            setInterval(checkMoves, 5000);
         });
     </script>
 </body>

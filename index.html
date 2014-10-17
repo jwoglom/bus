@@ -16,10 +16,11 @@
     <div id="container"></div>
     <script type="text/javascript" src="bus.js"></script>
     <script type="text/javascript">
+        window.isUpdate = false;
         stage.add(layer);
         $(function() {
             loadBuses(layer, false);
-            setInterval(checkMoves, 1000);
+            setInterval(checkMoves, 5000);
         });
     </script>
 </body>

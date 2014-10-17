@@ -3,7 +3,7 @@ var stage = new Kinetic.Stage({
     width: 2500,
     height: 2500
 });
-
+window.mouseDown = false;
 var layer = new Kinetic.Layer();
 
 var buses = {},
@@ -15,53 +15,6 @@ function renameBus(busText) {
 decode = function(text) {
     return decodeURIComponent(text).replace(/_/g, ' ');
 }
-function createText(layer, title, itext, moveable) {
-    var group = new Kinetic.Group({
-    	draggable: moveable
-    });
-    var rect = new Kinetic.Rect({
-    	x: 50,
-	y: 50,
-	width: 200,
-	height: 200
-    });
-    var text = new Kinetic.Text({
-    	x: 54,
-	y: 54,
-	text: decode(itext),
-	fill: 'black',
-	opacity: 1.0,
-	width: 200,
-	height: 200,
-	fontSize: 22,
-	fontFamily: 'ComicSans',
-	align: 'center'
-    });
-    var text2 = new Kinetic.Text({
-	x: 54,
-	y: 84,
-	text: decode(title),
-	fill: 'black',
-	opacity: 1.0,
-	width: 200,
-	height: 170,
-	fontSize: 14,
-	fontFamily: 'ComicSans',
-	align: 'center'
-    });
-    group.add(rect);
-    group.add(text);
-    if (moveable) {
-        group.on('dragmove', function() {
-            console.log(group.getAbsolutePosition().x+', '+group.getAbsolutePosition().y);
-            positions[busName] = [group.getAbsolutePosition().x, group.getAbsolutePosition().y];
-            positionsChanged[busName] = true;
-            window.saved = false; unsavedAnim();
-        });
-    }
-    layer.add(group);
-    group.draw();
-}
 function createBus(layer, busName, moveable) {
     var rotate = true;
     var textbox = (busName != null && busName.substring(0,5) == 'text:');
@@ -71,9 +24,10 @@ function createBus(layer, busName, moveable) {
     var group = new Kinetic.Group({
         draggable: moveable
     });
+    var sx = 150, sy = 150;
     var rect = new Kinetic.Rect({
-        x: 50,
-        y: 50,
+        x: sx,
+        y: sy,
         rotationDeg: rotate ? 315 : 0,
         width: 50,
         height: 30,
@@ -82,8 +36,8 @@ function createBus(layer, busName, moveable) {
         strokeWidth: 2
     });
     var text = new Kinetic.Text({
-        x: !rotate ? 50 : 55,
-        y: 56,
+        x: !rotate ? sx : sx + 5,
+        y: sy + 6,
         text: decode(textbox ? tbn : busName),
         rotationDeg: rotate ? 315 : 0,
         fill: 'black',
@@ -100,6 +54,14 @@ function createBus(layer, busName, moveable) {
     positions[busName] = [0, 0];
     positionsChanged[busName] = true;
     if(moveable) {
+        group.on('mousedown', function() {
+            window.mouseDown = true;
+            console.debug('Mousedown');
+        });
+        group.on('mouseup', function() {
+            window.mouseDown = false;
+            console.debug('Mouseup');
+        })
         group.on('dblclick', function() {
             // Allow double-click toggling
             if($(".updater").css("display") != "none" && $(".updater").attr("data-bus") == busName) {
@@ -110,7 +72,7 @@ function createBus(layer, busName, moveable) {
                          .css({
                             "left": positions[busName][0]+"px",
                             "top": (parseInt(positions[busName][1])+75)+"px"
-                        }).attr("data-bus", busName);
+                       }).attr("data-bus", busName);
             $(".updater > input").val(busName);
             $(".updater #updaterDelete").click(function() {
                 if($(this).parent().parent().attr("data-bus") == busName) {
@@ -218,22 +180,34 @@ loadBuses = function(layer, moveable) {
 }
 
 checkMoves = function() {
+    if(window.mouseDown) {
+        console.debug('Waiting on update check.');
+        return;
+    }
     $.post('update.php', {'act': 'fetch'}, function(d) {
         console.log(d);
+        if(window.mouseDown) {
+            console.debug('Skipping update check.');
+            return;
+        }
         for(i in d) {
             var pC = d[i].split(',');
             // new bus
             if(typeof positions[i] == 'undefined' && typeof buses[i] == 'undefined') {
-                createBus(layer, i, false);
+                console.info('REMOTE Addbus:');
+                createBus(layer, i, window.isUpdate);
                 moveBus(i, pC[0], pC[1]);
                 stage.draw();
                 buses[i].draw();
+                console.info('-------');
             // move
             } else {
                 if(!(positions[i][0] == pC[0] && positions[i][1] == pC[1])) {
+                    console.info('REMOTE Movebus:');
                     moveBus(i, pC[0], pC[1]);
                     stage.draw();
                     buses[i].draw();
+                    console.info('-------');
                 }
             }
         }
