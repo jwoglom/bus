@@ -216,7 +216,7 @@ checkChanges = function() {
 }
 
 loadBuses = function(layer, moveable) {
-    $.post('buses.txt', {}, function(d) {
+    $.post('buses.txt?'+(+new Date), {}, function(d) {
         for(i in d) {
             var pC = d[i].split(',');
             createBus(layer, i, window.isUpdate);
@@ -233,7 +233,7 @@ checkMoves = function() {
         console.debug('Waiting on update check.');
         return;
     }
-    $.post('buses.txt', {}, function(d) {
+    $.post('buses.txt?'+(+new Date), {}, function(d) {
         console.log(d);
         if(window.mouseDown) {
             console.debug('Skipping update check.');
