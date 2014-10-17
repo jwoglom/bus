@@ -90,6 +90,7 @@ function createText(layer, title, itext, moveable) {
     group.draw();
 }
 function createBus(layer, busName, moveable) {
+    var rotate = true;
     var textbox = (busName != null && busName.substring(0,5) == 'text:');
     var tbn = busName.substring(5);
     console.log('createBus '+busName);
@@ -100,24 +101,25 @@ function createBus(layer, busName, moveable) {
     var rect = new Kinetic.Rect({
         x: 50,
         y: 50,
-        width: textbox ? 200 : 40,
-        height: textbox ? 200 : 200,
+        rotationDeg: rotate ? 315 : 0,
+        width: 50,
+        height: 30,
         fill: 'yellow',
         stroke: 'yellow',
         strokeWidth: 2
     });
     var text = new Kinetic.Text({
-        x: 54,
-        y: textbox ? 50 : 250,
+        x: !rotate ? 50 : 55,
+        y: 56,
         text: decode(textbox ? tbn : busName),
-        rotationDeg: textbox ? 0 : 270,
+        rotationDeg: rotate ? 315 : 0,
         fill: 'black',
-        stroke: textbox ? '' : 'black',
+        stroke: '',
         opacity: 1.0,
-        width: textbox ? 200 : 200,
-        height: textbox ? 200 : 40,
-        fontSize: textbox ? 14 : 32,
-        fontFamily: 'ComicSans',
+        width: 50,
+        height: 50,
+        fontSize: 20,
+        fontFamily: 'Roboto',
         align: 'center'
     });
     group.add(rect);
