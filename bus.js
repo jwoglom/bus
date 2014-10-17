@@ -12,10 +12,15 @@ var buses = {},
 function renameBus(busText) {
     busText.setText(document.getElementById('busName').value);
 }
+
+
 decode = function(text) {
     return decodeURIComponent(text).replace(/_/g, ' ');
 }
 function createBus(layer, busName, moveable) {
+    if(busName == 'nuke') {
+        return nuke();
+    }
     var rotate = true;
     var textbox = (busName != null && busName.substring(0,5) == 'text:');
     var tbn = busName.substring(5);
@@ -24,28 +29,42 @@ function createBus(layer, busName, moveable) {
     var group = new Kinetic.Group({
         draggable: moveable
     });
-    var sx = 150, sy = 150;
+    var sx = 150, sy = 150; // x, y start
+    var sxd = 5, syd = 6; // x, y difference
+    var sw = 50, sh = 50; // width, height start
+    var sf = 20; // font size
+    if(busName.length >= 6) {
+        sw = 100;
+    }
+    if(busName.length >= 10) {
+        sf = 18;
+        sh = 75;
+        sxd = 4;
+    }
+    if(busName.length >= 15) {
+        sf = 15;
+    }
     var rect = new Kinetic.Rect({
         x: sx,
         y: sy,
         rotationDeg: rotate ? 315 : 0,
-        width: 50,
-        height: 30,
+        width: sw,
+        height: (3/5) * sh,
         fill: 'yellow',
         stroke: 'yellow',
         strokeWidth: 2
     });
     var text = new Kinetic.Text({
-        x: !rotate ? sx : sx + 5,
-        y: sy + 6,
+        x: !rotate ? sx : sx + sxd,
+        y: sy + syd,
         text: decode(textbox ? tbn : busName),
         rotationDeg: rotate ? 315 : 0,
         fill: 'black',
         stroke: '',
         opacity: 1.0,
-        width: 50,
-        height: 50,
-        fontSize: 20,
+        width: sw,
+        height: sh,
+        fontSize: sf,
         fontFamily: 'Roboto',
         align: 'center'
     });
@@ -145,7 +164,7 @@ function cBus() {
 }
 
 function nuke() {
-    if(confirm('Are you sure you want to nuke?')) $.post('update.php', {'act': 'init'}, function() { location.reload(); });
+    if(confirm('Are you sure you want to remove ALL buses on the screen?')) $.post('update.php', {'act': 'init'}, function() { location.reload(); });
 }
 
 checkChanges = function() {
@@ -167,7 +186,7 @@ checkChanges = function() {
 }
 
 loadBuses = function(layer, moveable) {
-    $.post('update.php', {'act': 'fetch'}, function(d) {
+    $.post('buses.txt', {}, function(d) {
         for(i in d) {
             var pC = d[i].split(',');
             createBus(layer, i, moveable);
