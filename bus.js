@@ -51,34 +51,7 @@ function createText(layer, title, itext, moveable) {
     });
     group.add(rect);
     group.add(text);
-    if(moveable) {
-        group.on('dblclick', function() {
-            var p = prompt('Choose one of the following commands:\n\n'+
-                           '\ttitle [new title]\t\tChange title\n'+
-                           '\tdelete\t\t\tDelete this\n'+
-                           '\tmove [x] [y]\t\tMove to position (x,y)\n'+
-                           '\tchanged\t\t\tForce change position\n'+
-                           '\tnuke\t\t\tRemove all buses (WARNING)\n'+
-                           '\nType your choice below..');
-            var c = p.split(' ',1);
-            if(c[0] == 'title' || c[0] == 'delete') {
-                positionsChanged[busName] = true;
-                var opos = positions[busName];
-                moveBus(busName, -999, -999);
-                if(p != 'delete') {
-                    createBus(layer, c[1], moveable);
-                    moveBus(c[1], opos[0], opos[1]);
-                }
-            } else if(c[0] == 'move') {
-                var mv = p.split(' ');
-                moveBus(busName, mv[1], mv[2]);
-                positionsChanged[busName] = true;
-            } else if(c[0] == 'changed') {
-                positionsChanged[busName] = true;
-            } else if(c[0] == 'nuke') {
-                nuke();
-            }
-        });
+    if (moveable) {
         group.on('dragmove', function() {
             console.log(group.getAbsolutePosition().x+', '+group.getAbsolutePosition().y);
             positions[busName] = [group.getAbsolutePosition().x, group.getAbsolutePosition().y];
@@ -128,13 +101,30 @@ function createBus(layer, busName, moveable) {
     positionsChanged[busName] = true;
     if(moveable) {
         group.on('dblclick', function() {
-            var p = prompt('Choose one of the following commands:\n\n'+
-                           '\ttitle [new title]\t\tChange title\n'+
-                           '\tdelete\t\t\tDelete this\n'+
-                           '\tmove [x] [y]\t\tMove to position (x,y)\n'+
-                           '\tchanged\t\t\tForce change position\n'+
-                           '\tnuke\t\t\tRemove all buses (WARNING)\n'+
-                           '\nType your choice below..');
+            $(".updater").show()
+                         .css({
+                            "left": positions[busName][0],
+                            "right": positions[busName][1]
+                        });
+            $(".updater > input").val(busName);
+            $(".updater > #updaterDelete").click(function() {
+                positionsChanged[busName] = true;
+                var opos = positions[busName];
+                moveBus(busName, -999, -999);
+                $(".updater").hide();
+            });
+
+            $(".updater > #updaterChange").click(function() {
+                var nn = $(".updater > input").val();
+                console.log("Changing name to "+nn)
+                positionsChanged[busName] = true;
+                var opos = positions[busName];
+                moveBus(busName, -999, -999);
+                createBus(layer, nn, moveable);
+                moveBus(nn, opos[0], opos[1]);
+                $(".updater").hide();
+            });
+            /*
             var c = p.split(' ',1);
             if(c[0] == 'title' || c[0] == 'delete') {
                 positionsChanged[busName] = true;
@@ -152,7 +142,7 @@ function createBus(layer, busName, moveable) {
                 positionsChanged[busName] = true;
             } else if(c[0] == 'nuke') {
                 nuke();
-            }
+            }*/
         });
         group.on('dragmove', function() {
             console.log(group.getAbsolutePosition().x+', '+group.getAbsolutePosition().y);

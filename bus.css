@@ -51,3 +51,16 @@ body {
     position: absolute;
     margin-left: -1px;
 }
+
+.updater {
+    position: absolute; 
+    top: 200px;
+    width: 300px;
+    height: 60px;
+    display: visible;
+    z-index: 10;
+}
+
+.updater > input {
+    font-size: 14px;
+}

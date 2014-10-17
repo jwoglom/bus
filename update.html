@@ -18,8 +18,15 @@
         </div>
     </div>
     <div class="saved">Unsaved</div>
+    <div class="updater">
+        <button id="updaterDelete">Delete</button>
+        <input type="text" id="updaterText" value="" />
+        <button id="updaterChange">Change</button>
+    </div>
+
+    </div>
     <div id="container"></div>
-    <script type="text/javascript" src="bus.js"></script>
+    <script type="text/javascript" src="bus.js?<?php echo time(); ?>"></script>
     <script type="text/javascript">
         stage.add(layer);
         $(function() {
