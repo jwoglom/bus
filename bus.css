@@ -26,6 +26,7 @@ body {
 
 .top .add {
     margin-top: 5px;
+    width: 100%;
 }
 
 
@@ -37,7 +38,7 @@ body {
 
 .add #busName {
     width: 100%;
-    width: calc(100% - 160px);
+    width: calc(100% - 132px);
     height: 30px;
     font-size: 24px;
     margin-left: 10px;
@@ -45,11 +46,10 @@ body {
 }
 
 .add #createBus {
-    font-size: 20px;
-    width: 135px;
-    height: 36px;
-    position: absolute;
-    margin-left: -1px;
+    font-size: 18px;
+    width: auto;
+    height: 30px;
+
 }
 
 .updater {
@@ -61,6 +61,18 @@ body {
     z-index: 10;
 }
 
-.updater > input {
+.updater #updaterDelete {
+    float: left;
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+.updater #updaterText {
     font-size: 14px;
+    width: 150px;
+}
+
+.updater #updaterChange {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
 }

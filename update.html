@@ -5,6 +5,7 @@
     <!-- dependencies -->
     <script type="text/javascript" src="kinetic.js"></script>
     <script type="text/javascript" src="//code.jquery.com/jquery-1.10.2.min.js"></script>
+    <link rel="stylesheet" type="text/css" href="//maxcdn.bootstrapcdn.com/bootstrap/3.2.0/css/bootstrap.min.css" />
     <link rel="stylesheet" type="text/css" href="http://fonts.googleapis.com/css?family=Open+Sans:400,600" />
     <link rel="stylesheet" type="text/css" href="bus.css" />
     <meta name="viewport" content="width=device-width,initial-scale=1,user-scalable=1">
@@ -12,16 +13,20 @@
 
 <body>
     <div class="top">
-        <div class="add">
-            <input type="text" name="busName" id="busName" size="20" maxLength="25" onkeydown="if(this.value.substring(0,5) == 'text:') this.maxLength=99999,this.size=50; else this.maxLength=25,this.size=20" />
-            <button name="createBus" id="createBus" onClick="cBus()">Create Bus</button>
+        <div class="add input-group">
+            <input type="text" class="form-control" name="busName" id="busName" size="20" maxLength="25" onkeydown="if(this.value.substring(0,5) == 'text:') this.maxLength=99999,this.size=50; else this.maxLength=25,this.size=20" />
+            <button name="createBus" type="button" class="input-group-addon btn" id="createBus" onClick="cBus()">Create Bus</button>
         </div>
     </div>
     <div class="saved">Unsaved</div>
-    <div class="updater">
-        <button id="updaterDelete">Delete</button>
-        <input type="text" id="updaterText" value="" />
-        <button id="updaterChange">Change</button>
+    <div class="updater input-group">
+        <div class="input-group-button">
+            <button type="button" class="btn btn-danger" id="updaterDelete"><div class="glyphicon glyphicon-trash"></div></button>
+        </div>
+        <input type="text" id="updaterText" class="form-control" value="" />
+        <div class="input-group-button">
+            <button type="button" class="btn btn-primary" id="updaterChange">Change</button>
+        </div>
     </div>
 
     </div>
