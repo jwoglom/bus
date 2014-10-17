@@ -36,7 +36,7 @@
         window.isUpdate = true;
         stage.add(layer);
         $(function() {
-            loadBuses(layer, true);
+            loadBuses(layer);
             setInterval(checkChanges, 1000);
             setInterval(checkMoves, 5000);
         });

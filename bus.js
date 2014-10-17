@@ -189,7 +189,7 @@ loadBuses = function(layer, moveable) {
     $.post('buses.txt', {}, function(d) {
         for(i in d) {
             var pC = d[i].split(',');
-            createBus(layer, i, moveable);
+            createBus(layer, i, window.isUpdate);
             moveBus(i, pC[0], pC[1]);
             stage.draw();
             buses[i].draw();
@@ -203,7 +203,7 @@ checkMoves = function() {
         console.debug('Waiting on update check.');
         return;
     }
-    $.post('update.php', {'act': 'fetch'}, function(d) {
+    $.post('buses.txt', {}, function(d) {
         console.log(d);
         if(window.mouseDown) {
             console.debug('Skipping update check.');
