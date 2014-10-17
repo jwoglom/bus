@@ -55,8 +55,8 @@ body {
 .updater {
     position: absolute; 
     top: 200px;
-    width: 300px;
-    height: 60px;
+    width: 315px;
+    height: 35px;
     display: none;
     z-index: 10;
 }
@@ -75,4 +75,13 @@ body {
 .updater #updaterChange {
     border-top-left-radius: 0;
     border-bottom-left-radius: 0;
+}
+
+.updater #updaterColor {
+    background-color: yellow;
+    width: 15px;
+    height: 34px;
+    border-radius: 0;
+    border: 1px solid black;
+    float: left;
 }

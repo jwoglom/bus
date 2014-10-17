@@ -70,7 +70,7 @@ function createBus(layer, busName, moveable) {
     });
     group.add(rect);
     group.add(text);
-    positions[busName] = [0, 0];
+    positions[busName] = [0, 0, 'yellow'];
     positionsChanged[busName] = true;
     if(moveable) {
         group.on('mousedown', function() {
@@ -87,11 +87,12 @@ function createBus(layer, busName, moveable) {
                 $(".updater").hide();
                 return;
             }
-            $(".updater").show()
-                         .css({
-                            "left": positions[busName][0]+"px",
-                            "top": (parseInt(positions[busName][1])+75)+"px"
-                       }).attr("data-bus", busName);
+
+            var ul = positions[busName][0];
+            var ut = (parseInt(positions[busName][1])+75);
+            if(ul < 10) ul = 10;
+            if(ut < 30) ut = 30;
+            $(".updater").show().css({"left": ul+"px", "top": ut+"px"}).attr("data-bus", busName);
             $(".updater > input").val(busName);
             $(".updater #updaterDelete").click(function() {
                 if($(this).parent().parent().attr("data-bus") == busName) {
@@ -108,10 +109,34 @@ function createBus(layer, busName, moveable) {
                     console.log("Changing name to "+nn)
                     positionsChanged[busName] = true;
                     var opos = positions[busName];
-                    moveBus(busName, -999, -999);
+                    moveBus(busName, -999, -999, opos[2]);
                     createBus(layer, nn, moveable);
                     moveBus(nn, opos[0], opos[1]);
                     $(".updater").hide();
+                }
+            });
+
+            var col = positions[busName][2];
+            $(".updater #updaterColor").attr("data-color", col)
+                                       .css("background-color", col)
+                                       .click(function() {
+                if($(this).parent().parent().attr("data-bus") == busName) {
+                    var col = $(this).attr("data-color").trim();
+
+                     if(col == "lightgreen") ncol = "red";
+                    else if(col == "red") ncol = "yellow";
+                    else ncol = "lightgreen"; // if(col == "yellow")
+
+                    console.info("Color: "+col+" ncol: "+ncol);
+                    $(this).attr("data-color", ncol).css("background-color", ncol);
+
+                    positionsChanged[busName] = true;
+                    var cloc = positions[busName];
+                    moveBus(busName, -999, -999, "");
+                    createBus(layer, busName, moveable);
+                    moveBus(busName, cloc[0], cloc[1], ncol);
+
+                   
                 }
             });
             /*
@@ -136,7 +161,7 @@ function createBus(layer, busName, moveable) {
         });
         group.on('dragmove', function() {
             console.log(group.getAbsolutePosition().x+', '+group.getAbsolutePosition().y);
-            positions[busName] = [group.getAbsolutePosition().x, group.getAbsolutePosition().y];
+            positions[busName] = [group.getAbsolutePosition().x, group.getAbsolutePosition().y, positions[busName][2]];
             positionsChanged[busName] = true;
             window.saved = false; unsavedAnim();
         });
@@ -148,10 +173,15 @@ function createBus(layer, busName, moveable) {
 
 }
 
-function moveBus(busName, posX, posY) {
-    console.log('Moving '+busName+' '+posX+' '+posY);
-    positions[busName] = [posX, posY];
+function moveBus(busName, posX, posY, color) {
+    console.log('Moving '+busName+' '+posX+' '+posY+' ('+color+')');
+    positions[busName] = [posX, posY, color];
     buses[busName].setAbsolutePosition(posX, posY);
+    if(color && color.length > 0) {
+        var bg = buses[busName].children[0];
+        bg.attrs.fill = color;
+        bg.attrs.stroke = color;
+    }
     stage.draw();
     console.log()
 
@@ -173,7 +203,7 @@ checkChanges = function() {
         if(positionsChanged[i]) {
             positionsChanged[i] = false;
             chgd = true;
-            request[i] = positions[i][0]+','+positions[i][1];
+            request[i] = positions[i][0]+','+positions[i][1]+','+positions[i][2];
         }
     }
     if(chgd) {
@@ -190,7 +220,7 @@ loadBuses = function(layer, moveable) {
         for(i in d) {
             var pC = d[i].split(',');
             createBus(layer, i, window.isUpdate);
-            moveBus(i, pC[0], pC[1]);
+            moveBus(i, pC[0], pC[1], pC[2]);
             stage.draw();
             buses[i].draw();
         }
@@ -215,15 +245,15 @@ checkMoves = function() {
             if(typeof positions[i] == 'undefined' && typeof buses[i] == 'undefined') {
                 console.info('REMOTE Addbus:');
                 createBus(layer, i, window.isUpdate);
-                moveBus(i, pC[0], pC[1]);
+                moveBus(i, pC[0], pC[1], pC[2]);
                 stage.draw();
                 buses[i].draw();
                 console.info('-------');
             // move
             } else {
-                if(!(positions[i][0] == pC[0] && positions[i][1] == pC[1])) {
+                if(!(positions[i][0] == pC[0] && positions[i][1] == pC[1] && positions[i][2] == pC[2])) {
                     console.info('REMOTE Movebus:');
-                    moveBus(i, pC[0], pC[1]);
+                    moveBus(i, pC[0], pC[1], pC[2]);
                     stage.draw();
                     buses[i].draw();
                     console.info('-------');
