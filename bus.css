@@ -2,10 +2,12 @@ body {
     font-family: 'Open Sans', sans-serif;
 }
 
+/*
 .kineticjs-content {
     background-image: url(grounds.png);
     background-repeat: no-repeat;
 }
+*/
 
 .top {
     position: fixed;
