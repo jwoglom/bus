@@ -255,7 +255,7 @@ function moveBus(busName, posX, posY, color) {
     console.log('Moving '+busName+' '+posX+' '+posY+' ('+color+')');
     positions[busName] = [posX, posY, color];
     buses[busName].setAbsolutePosition(posX, posY);
-    if(color && color != undefined && color.length > 0) {
+    if(color && color != undefined && color != "undefined" && color.length > 0) {
         var bg = buses[busName].children[0];
         bg.attrs.fill = color;
         bg.attrs.stroke = color;
